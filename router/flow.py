@@ -51,8 +51,8 @@ class FlowFlagStore:
         self.beverage_temperature = []
 
     def flag_handler(self, original_predicted_sentence, predicted_answer_sentence) -> str:
-        download_file(file="conversation.json", save_dir='./')
-        with open('conversation.json', 'r', encoding='utf-8') as file:
+        download_file(file="conversation_en.json", save_dir='./')
+        with open('conversation_en.json', 'r', encoding='utf-8') as file:
             unfiltered_sentences = json.load(file)
         for unfiltered_index, unfiltered_val in enumerate(unfiltered_sentences):
             if original_predicted_sentence in unfiltered_val:

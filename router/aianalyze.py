@@ -20,7 +20,7 @@ class LoadingIndicator:
         self.spinner = itertools.cycle(['|', '/', '-', '\\'])
         self.thread = threading.Thread(target=self.animate)
         save_dir = os.getcwd() # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
-        download.download_file(file="conversation.json", save_dir=save_dir) # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
+        download.download_file(file="conversation_en.json", save_dir=save_dir) # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
 
     def animate(self):
         while not self.done:
@@ -68,7 +68,9 @@ class SentenceCompare:
         self.callinggemini = CallingGemini()
         self.flag = FlowFlagStore() # Flag를 저장하는 class 로드및 class variant로 load하기
         self.model = SentenceTransformer(model_name, cache_folder=self.cache_folder)
-        with open('conversation.json', 'r', encoding='utf-8') as file:
+        save_dir = "SioskServer_en/router"
+        download.download_file(file="conversation_en.json", save_dir=save_dir)
+        with open('conversation_en.json', 'r', encoding='utf-8') as file:
             unfiltered_sentences = json.load(file)
             for unfiltered_sentences_index, unfiltered_sentences_val in enumerate(unfiltered_sentences):
                 self.sentences_train.append(str(unfiltered_sentences_val).split(' | ')[0]) # flag에 따하서 append해주기 -> 4부터 7까지 0 ~ 3까지는 한가지 배열로 넣어두기
@@ -151,7 +153,7 @@ class SentenceCompare:
         while True:
             Airing_start = time.time()
             compare_embedded_time = [] # time average calculation array
-            with open('conversation.json', 'r', encoding='utf-8') as file:
+            with open('conversation_en.json', 'r', encoding='utf-8') as file:
                 quality_check_data = json.load(file)
             returning = self.quality_check_detail_main(quality_check_data, compare_embedded_time)
             if returning == True:
@@ -182,7 +184,7 @@ class SentenceCompare:
         
     def checking_using_outer_api(self, similarities_list, index_max_val, single_sentence):
         max_comparison_val = similarities_list[index_max_val]
-        if max_comparison_val > 0.7:
+        if max_comparison_val > 0.8:
             return True
         else:
             answer = self.callinggemini.creating_response(single_sentence)
@@ -209,6 +211,7 @@ class SentenceCompare:
             print("\033[33m" + "\nLOG" + "\033[0m" + ":" + f"     Predicted Script data '{sentences[index_max_val]}'")
             print("\033[33m" + "LOG" + "\033[0m" + ":" + f"     Predicted Script answer '{sentences_A[index_max_val]}'")
             # print(similarities_list)
+            # print(sentences[index_max_val], sentences_A[index_max_val], True, flagment[index_max_val])
             return sentences[index_max_val], sentences_A[index_max_val], True, flagment[index_max_val]
 
     def process(self, ques):
@@ -247,6 +250,7 @@ class SentenceCompare:
             pass
         end = time.time()
         print("\033[33m" + "LOG" + "\033[0m" + ":" + f"     Embedded Time: {str(end - start)}\n")
+        # print(predicted_Q, predicted_A, end - start, flag)
         return predicted_Q, predicted_A, end - start, flag
     
     def Airing(self):
