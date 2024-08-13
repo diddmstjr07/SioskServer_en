@@ -173,37 +173,29 @@ class FlowFlagStore:
             "얼그레이",
             "자몽차"
         ]
-        if original_predicted_sentence == "추천해줘":
+        if original_predicted_sentence == "Recommend":
             selection = data[random.randint(0, len(data) - 1)]
             beverage_kind_str = selection
             self.beverage_kind.append(beverage_kind_str)
-            return f"네 {beverage_kind_str} 몇잔드릴까요?"
+            return f"Yes how many {beverage_kind_str} do you like?"
         else:
-            beverage_kind_str = original_predicted_sentence.split(' 줄래?')[0]
+            beverage_kind_str = original_predicted_sentence.split('Give me ')[1]
             self.beverage_kind.append(beverage_kind_str)
             return 3
 
     def beverage_amount_flag_4(self, original_predicted_sentence: str) -> None: # This function can be entered only flag val is '6'
-        beverage_amount_str = original_predicted_sentence.split(' 줘')[0]
-        if str(beverage_amount_str[-1]) != "잔":
-            result = str(beverage_amount_str).replace(beverage_amount_str[-1], "잔")
-            self.beverage_amount.append(result)
-        else:
-            self.beverage_amount.append(beverage_amount_str)
+        beverage_amount_str = original_predicted_sentence.split('Give me ')[1]
+        self.beverage_amount.append(beverage_amount_str)
     
     def beverage_temperature_flag_5(self, original_predicted_sentence: str, predicted_answer_sentence: str) -> None: # This function can be entered only flag val is '6'
-        beverage_temperature_str = original_predicted_sentence.split(' 줘')[0]
-        if beverage_temperature_str == "차갑게":
-            beverage_temperature_str = beverage_temperature_str.replace("갑게", "가운")
-        elif beverage_temperature_str == "따뜻하게":
-            beverage_temperature_str = beverage_temperature_str.replace("하게", "한")
+        beverage_temperature_str = original_predicted_sentence.split('Give it to me ')[1]
         self.beverage_temperature.append(beverage_temperature_str)
-        return predicted_answer_sentence.split(" 넣어드릴까요?")[0] + " " + self.beverage_temperature[-1] + " " + self.beverage_kind[-1] + " " + self.beverage_amount[-1] + " 넣어드릴까요?"
+        return predicted_answer_sentence.split(" it to the cart. Would you like to proceed with this order or add more items?")[0] + " " + self.beverage_temperature[-1] + " " + self.beverage_kind[-1] + " " + self.beverage_amount[-1] + " it to the cart. Would you like to proceed with this order or add more items?"
     
     def beverage_cancel_flag_6(self, predicted_answer_sentence: str) -> None: # This function can be entered only flag val is '6'
-        if predicted_answer_sentence == "네 장바구니에 넣어드렸습니다. 이대로 주문하실건가요? 아니면 메뉴를 추가하시겠습니까?":
+        if predicted_answer_sentence == "I have added it to the cart. Would you like to proceed with this order or add more items?":
             pass
-        elif predicted_answer_sentence == "네 해당 주문이 취소되었습니다. 이대로 주문하실건가요? 아니면 메뉴를 추가하시겠습니까?":
+        elif predicted_answer_sentence == "The order has been canceled. Would you like to proceed with this order or add more items?":
             self.beverage_kind.pop()
             self.beverage_amount.pop()
             self.beverage_temperature.pop()
