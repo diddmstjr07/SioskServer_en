@@ -9,8 +9,8 @@ from tqdm import tqdm
 import random
 import threading
 import itertools
-import router.download as download
-from router.outer_api_gemini import CallingGemini
+import SioskServer_en.router.download as download
+from SioskServer_en.router.outer_api_gemini import CallingGemini
 
 
 class LoadingIndicator:
@@ -69,7 +69,7 @@ class SentenceCompare:
         self.flag = FlowFlagStore() # Flag를 저장하는 class 로드및 class variant로 load하기
         self.model = SentenceTransformer(model_name, cache_folder=self.cache_folder)
         save_dir = "SioskServer_en/router"
-        download.download_file(file="conversation_en.json", save_dir=save_dir)
+        # download.download_file(file="conversation_en.json", save_dir=save_dir)
         with open('conversation_en.json', 'r', encoding='utf-8') as file:
             unfiltered_sentences = json.load(file)
             for unfiltered_sentences_index, unfiltered_sentences_val in enumerate(unfiltered_sentences):
@@ -120,7 +120,7 @@ class SentenceCompare:
             Airing_start = time.time()
             compare_embedded_time = [] # time average calculation array
             random_data  = [] # quality test data array
-            with open('airing_data.json', 'r', encoding='utf-8') as file:
+            with open('SioskServer_en/router/airing_data.json', 'r', encoding='utf-8') as file:
                 quality_check_data = json.load(file)
                 for _ in range(5):
                     random_data.append(quality_check_data[random.randint(0, 149)])

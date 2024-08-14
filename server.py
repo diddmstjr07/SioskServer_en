@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from router.aianalyze import SentenceCompare
-from router.connection import thread_read_token
-from router.kill import KillProcess
+from SioskServer_en.router.aianalyze import SentenceCompare
+from SioskServer_en.router.connection import thread_read_token
+from SioskServer_en.router.kill import KillProcess
 import os
 import warnings
+import uvicorn
 
 app = FastAPI()
 run = SentenceCompare() # This must not exceed the json data amounts also json data must divided by amount of thread
@@ -43,12 +43,12 @@ async def read_root(api_key: str = Depends(get_api_key), ques: str = None):
 async def read_root(api_key: str = Depends(get_api_key), host: str = None, ip: str = None):
     print("\033[1;32m" + "INFO" + "\033[0m" + ":" + f"     Client Connected from {host} -> {ip}")
     return {"message": True}
+                # ssl_keyfile="./ssl/privkey.pem", ssl_certfile="./ssl/cert.pem", reload=True)
 
-if __name__ == "__main__":
+def process():
     killer = KillProcess()
     killer.killing()
-    uvicorn.run("server:app", host="0.0.0.0", port=9460)
-                # ssl_keyfile="./ssl/privkey.pem", ssl_certfile="./ssl/cert.pem", reload=True)
+    uvicorn.run("SioskServer_en.server:app", host="0.0.0.0", port=9460)
 
 '''
 서버 시작할때, model을 로딩을 시키는 방식으로 진행을 하고
